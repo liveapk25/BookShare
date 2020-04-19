@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#121212</color>
+    <color name="colorPrimaryDark">#121212</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent1">#B2FF59</color>
+    <color name="colorAccent2">#FFD740</color>
+    <color name="colorAccent3">#40C4FF</color>
+    <color name="colorAccent4">#7C4DFF</color>
+    <color name="darkBackground">#121212</color>
+    <color name="darkCard">#17FFFFFF</color>
+    <color name="darkCard_2">#27FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red">#ef9a9a</color>
+    <color name="pink">#ef9a9a</color>
+    <color name="purple">#CE93D8</color>
+    <color name="deepPurple">#B39DDB</color>
+    <color name="indigo">#9FA8DA</color>
+    <color name="blue">#90CAF9</color>
+    <color name="lightBlue">#81D4FA</color>
+    <color name="cyan">#80DEEA</color>
+    <color name="teal">#80CBC4</color>
+    <color name="green">#A5D6A7</color>
+    <color name="lightGreen">#C5E1A5</color>
+    <color name="lime">#E6EE9C</color>
+    <color name="yellow">#FFF59D</color>
+    <color name="amber">#FFE082</color>
+    <color name="orange">#FFCC80</color>
+    <color name="deepOrange">#FFAB91</color>
+    <color name="brown">#BCAAA4</color>
+    <color name="grey">#EEEEEE</color>
+    <color name="deepgrey">#B0BEC5</color>
+
+</resources>
