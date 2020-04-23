@@ -45,7 +45,7 @@
                     android:id="@+id/add_by_isbn_container_home"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.25"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -73,7 +73,7 @@
                     android:id="@+id/scan_barcode_container_home"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.25"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -101,7 +101,7 @@
                     android:id="@+id/add_manually_container"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.25"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:weightSum="1">
@@ -121,6 +121,34 @@
                         android:layout_marginTop="2dp"
                         android:gravity="center"
                         android:text="Add Manually"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/logout_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/sign_out_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        app:backgroundTint="@color/green"
+                        app:srcCompat="@drawable/ic_person_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="Sign Out"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>

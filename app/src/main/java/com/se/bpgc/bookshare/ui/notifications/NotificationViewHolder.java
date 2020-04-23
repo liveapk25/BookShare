@@ -2,6 +2,7 @@ package com.se.bpgc.bookshare.ui.notifications;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,10 @@ class NotificationViewHolder extends RecyclerView.ViewHolder{
     View infoContainer;
     FloatingActionButton detail;
     FloatingActionButton cancel;
+    ImageButton whatsapp;
+
+    View viewProfileContainer;
+    Button viewProfile;
 
     public NotificationViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -52,6 +57,12 @@ class NotificationViewHolder extends RecyclerView.ViewHolder{
         infoContainer = itemView.findViewById(R.id.info_container_notif);
         detail = itemView.findViewById(R.id.detail_button_notif);
         cancel = itemView.findViewById(R.id.cancel_button_notif);
+
+        whatsapp = itemView.findViewById(R.id.whatsapp_button);
+
+        viewProfileContainer = itemView.findViewById(R.id.profile_container_notif);
+        viewProfile = itemView.findViewById(R.id.profile_button_notif);
+
 
     }
 }

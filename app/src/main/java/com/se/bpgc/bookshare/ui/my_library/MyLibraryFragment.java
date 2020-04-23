@@ -50,6 +50,11 @@ public class MyLibraryFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         catalogRecycler = root.findViewById(R.id.library_recycler_view);
+        TextView catalogText = root.findViewById(R.id.catalog_text);
+        catalogText.setText("My Library:");
+
+        SearchView sView = root.findViewById(R.id.library_search_view);
+        sView.setQueryHint("Search from your library");
 
         final FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
         Query query = FirebaseDatabase.getInstance().getReference("userData").child(mAuth.getUid()).child("bookList").orderByChild("title");

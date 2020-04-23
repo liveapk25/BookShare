@@ -38,14 +38,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.se.bpgc.bookshare.BarcodeScannerActivity;
 import com.se.bpgc.bookshare.BookActivity;
 import com.se.bpgc.bookshare.BookMetadataModel;
+import com.se.bpgc.bookshare.LoginActivity;
 import com.se.bpgc.bookshare.MainActivity;
 import com.se.bpgc.bookshare.R;
 import com.squareup.picasso.Picasso;
@@ -92,6 +88,15 @@ public class HomeFragment extends Fragment {
                             3);
         }
 
+        final FloatingActionButton signOut = root.findViewById(R.id.sign_out_button);
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+            }
+        });
 
         final FloatingActionButton scanButton = root.findViewById(R.id.scan_barcode_button_home);
 
@@ -206,7 +211,7 @@ public class HomeFragment extends Fragment {
         //New Additions
         newAdditionsRecycler = root.findViewById(R.id.new_addition_recycler);
 
-        Query new_addition_query = FirebaseDatabase.getInstance().getReference("catalog").orderByChild("timestamp").limitToFirst(10);
+        Query new_addition_query = FirebaseDatabase.getInstance().getReference("catalog").orderByChild("timestamp").limitToLast(10);
 
         FirebaseRecyclerOptions<BookMetadataModel> newAdditionOptions =
                 new FirebaseRecyclerOptions.Builder<BookMetadataModel>()
@@ -225,6 +230,7 @@ public class HomeFragment extends Fragment {
                 super.onDataChanged();
                 newAdditionProgress.setVisibility(View.GONE);
                 newAdditionsRecycler.setVisibility(View.VISIBLE);
+                newAdditionsRecycler.smoothScrollToPosition(getItemCount()-1);
             }
 
             @Override

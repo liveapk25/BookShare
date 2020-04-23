@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseUserMetadata;
@@ -34,10 +35,20 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build()
         );
-        showSignInOptions();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(fUser == null){
+            showSignInOptions();
+        }
+        else{
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
+        }
+
+
     }
 
     private void showSignInOptions() {

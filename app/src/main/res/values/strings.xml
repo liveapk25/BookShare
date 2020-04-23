@@ -6,7 +6,8 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_book">BookActivity</string>
     <string name="title_my_library">My Library</string>
-
+    <string name="dialog_error"> No Results Found: Please Check The Input. ISBN identifier is usually 10 or 13 digit long. If you are still unable to add, the book may not be present in database. Please add the book manually.
+    </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

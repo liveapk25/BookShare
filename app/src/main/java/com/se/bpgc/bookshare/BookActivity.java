@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,8 @@ public class BookActivity extends AppCompatActivity {
         final float averageRating = Float.parseFloat(bookIntent.getStringExtra("averageRating"));
         final String category = bookIntent.getStringExtra("category");
         final String isbn = bookIntent.getStringExtra("isbn");
+
+        final Button addToLib = findViewById(R.id.add_to_lib);
 
         TextView title_view = findViewById(R.id.title_book);
         title_view.setText(title);
@@ -76,6 +79,7 @@ public class BookActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.exists()){
                     container.setVisibility(View.VISIBLE);
+                    addToLib.setVisibility(View.VISIBLE);
                 }
                 else{
 
@@ -254,6 +258,73 @@ public class BookActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(),"Check Notifications For Status",Toast.LENGTH_SHORT).show();
                 finish();
+            }
+        });
+
+
+        addToLib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                container.setVisibility(View.GONE);
+                addToLib.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(),"Book has been successfully added to your library",Toast.LENGTH_SHORT).show();
+                DatabaseReference hRef = FirebaseDatabase.getInstance().getReference("catalog").child(isbn);
+
+                hRef.child("userList").child(mAuth.getUid()).child("uid").setValue(mAuth.getUid());
+                hRef.child("count").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            dataSnapshot.getRef().setValue((long)dataSnapshot.getValue()+1);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("userData").child(mAuth.getUid()).child("bookList").child(isbn);
+                mRef.child("title").setValue(title);
+                mRef.child("titleLowerCase").setValue(title.toLowerCase());
+                mRef.child("author").setValue(author);
+                mRef.child("category").setValue(category);
+                mRef.child("description").setValue(description);
+                mRef.child("thumbnail").setValue(thumbnail);
+                mRef.child("averageRating").setValue(averageRating);
+                mRef.child("isbn").setValue(isbn);
+
+                String timestamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())*-1);
+                mRef.child("timestamp").setValue(timestamp);
+                mRef = mRef.getParent().getParent().child("count");
+
+                mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        long val = (long)dataSnapshot.getValue();
+                        dataSnapshot.getRef().setValue(val+1);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                mRef = mRef.getParent().getParent().child("totalCount");
+
+                mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        long val = (long) dataSnapshot.getValue();
+                        dataSnapshot.getRef().setValue(val+1);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 

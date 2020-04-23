@@ -239,7 +239,7 @@ public class BarcodeScannerActivity extends AppCompatActivity implements ZXingSc
                 }
                 else{
                     finish();
-                    Toast.makeText(getApplicationContext(),"Error occurred While Adding The Book",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Error occurred While Adding The Book : Please Try Adding Manually if error persists",Toast.LENGTH_SHORT).show();
                 }
 
 

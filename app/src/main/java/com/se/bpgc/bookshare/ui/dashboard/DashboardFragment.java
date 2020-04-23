@@ -27,15 +27,24 @@ import com.se.bpgc.bookshare.BookMetadataModel;
 import com.se.bpgc.bookshare.R;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 public class DashboardFragment extends Fragment {
 
     RecyclerView catalogRecycler;
     FirebaseRecyclerAdapter<BookMetadataModel,GridViewHolder> catalogAdapter;
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        TextView catalogText = root.findViewById(R.id.catalog_text);
+        catalogText.setText("Catalog:");
+
+        SearchView sView = root.findViewById(R.id.library_search_view);
+        sView.setQueryHint("Search from Catalog");
 
         catalogRecycler = root.findViewById(R.id.library_recycler_view);
 

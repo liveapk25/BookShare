@@ -1,5 +1,7 @@
 package com.se.bpgc.bookshare.ui.home;
 
+
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -43,6 +45,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+
 public class AddByIsbnDialog extends DialogFragment {
 
     EditText searchField;
@@ -80,7 +83,7 @@ public class AddByIsbnDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 error.setVisibility(View.GONE);
-                String isbn_str = searchField.getText().toString();
+                String isbn_str = searchField.getText().toString().replaceAll("[^a-zA-Z0-9]","");
                 GoogleApiRequest apiRequest = new GoogleApiRequest();
                 apiRequest.execute(isbn_str);
             }
@@ -176,6 +179,7 @@ public class AddByIsbnDialog extends DialogFragment {
                 final JSONObject jsn = responseJson;
                 final MetadataParser mData = new MetadataParser(responseJson);
                 if(!mData.isValid()){
+                    error.setText(R.string.dialog_error);
                     error.setVisibility(View.VISIBLE);
                     infoContainer.setVisibility(View.VISIBLE);
                 }

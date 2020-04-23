@@ -22,11 +22,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.se.bpgc.bookshare.BookActivity;
+import com.se.bpgc.bookshare.ProfileActivity;
 import com.se.bpgc.bookshare.R;
 import com.se.bpgc.bookshare.ui.my_library.MyLibraryFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHolder> {
     ArrayList<NotificationModel> set;
@@ -132,12 +134,28 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
 
                 holder.requestText.setText(notif.getResponseName()+" has accepted your request for:");
 
+                holder.viewProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, ProfileActivity.class);
+                        intent.putExtra("uid",notif.getResponseUid());
+                        intent.putExtra("phone",notif.getResponsePhone());
+                        intent.putExtra("email",notif.getResponseEmail());
+                        intent.putExtra("name",notif.getResponseName());
+                        context.startActivity(intent);
+                    }
+                });
+
+                holder.viewProfileContainer.setVisibility(View.VISIBLE);
+
                 if(!notif.getResponsePhone().isEmpty()){
 
                     holder.phone.setOnClickListener(new PhoneOnClickListener(notif.getResponsePhone()));
                     holder.sms.setOnClickListener(new SmsOnClickListener(notif.getResponsePhone()));
+                    holder.whatsapp.setOnClickListener(new WhatsappOnClickListener(notif.getResponsePhone()));
                     holder.phone.setVisibility(View.VISIBLE);
                     holder.sms.setVisibility(View.VISIBLE);
+                    holder.whatsapp.setVisibility(View.VISIBLE);
 
                 }
 
@@ -152,13 +170,60 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
                         set.remove(holder.getAdapterPosition());
                         notifyItemRemoved(holder.getAdapterPosition());
                         FirebaseDatabase.getInstance().getReference("userData").child(notif.getUserUid()).child("notifications").child(notif.getNotifID()).removeValue();
-                        if(notif.getScheduleDelete() == "true"){
+                        if(notif.getScheduleDelete().equals("true")){
                             FirebaseDatabase.getInstance().getReference("notifications").child(notif.getNotifID()).removeValue();
                         }
                         else{
                             FirebaseDatabase.getInstance().getReference("notifications").child(notif.getNotifID()).child("scheduleDelete").setValue("true");
-
                         }
+
+                        String timestamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())*-1);
+
+                        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("userData").child(notif.getUserUid()).child("bookList").child(notif.getIsbn());
+                        NotificationModel mData = notif;
+                        mRef.child("title").setValue(mData.getTitle());
+                        mRef.child("titleLowerCase").setValue(mData.getTitle().toLowerCase());
+                        mRef.child("author").setValue(mData.getAuthor());
+                        mRef.child("category").setValue(mData.getCategory());
+                        mRef.child("description").setValue(mData.getDescription());
+                        mRef.child("thumbnail").setValue(mData.getThumbnail());
+                        mRef.child("averageRating").setValue(mData.getAverageRating());
+                        mRef.child("isbn").setValue(mData.getIsbn());
+                        mRef.child("timestamp").setValue(timestamp);
+                        mRef = mRef.getParent().getParent().child("count");
+
+                        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                long val = (long)dataSnapshot.getValue();
+                                dataSnapshot.getRef().setValue(val+1);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        mRef = FirebaseDatabase.getInstance().getReference("catalog").child(notif.getIsbn());
+                        mRef.child("userList").child(notif.getResponseUid()).removeValue();
+                        mRef.child("userList").child(notif.getUserUid()).child("uid").setValue(notif.getUserUid());
+
+                        mRef = FirebaseDatabase.getInstance().getReference("userData").child(notif.getResponseUid());
+                        mRef.child("bookList").child(notif.getIsbn()).removeValue();
+
+                        mRef.child("count").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                long val = (long) dataSnapshot.getValue();
+                                dataSnapshot.getRef().setValue(val-1);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
 
                     }
                 });
@@ -175,8 +240,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
             if(!notif.getRequestPhone().isEmpty()){
                 holder.phone.setOnClickListener(new PhoneOnClickListener(notif.getRequestPhone()));
                 holder.sms.setOnClickListener(new SmsOnClickListener(notif.getRequestPhone()));
+                holder.whatsapp.setOnClickListener(new WhatsappOnClickListener(notif.getRequestPhone()));
                 holder.phone.setVisibility(View.VISIBLE);
                 holder.sms.setVisibility(View.VISIBLE);
+                holder.whatsapp.setVisibility(View.VISIBLE);
             }
 
             if(!notif.getRequestEmail().isEmpty()){
@@ -200,6 +267,20 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
                     }
                 }
             });
+
+            holder.viewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ProfileActivity.class);
+                    intent.putExtra("uid",notif.getRequestUid());
+                    intent.putExtra("phone",notif.getRequestPhone());
+                    intent.putExtra("email",notif.getRequestEmail());
+                    intent.putExtra("name",notif.getRequestName());
+                    context.startActivity(intent);
+                }
+            });
+
+            holder.viewProfileContainer.setVisibility(View.VISIBLE);
 
             holder.delete.setVisibility(View.VISIBLE);
 
@@ -252,14 +333,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
                     if(!notif.getRequestPhone().isEmpty()){
                         holder.phone.setOnClickListener(new PhoneOnClickListener(notif.getRequestPhone()));
                         holder.sms.setOnClickListener(new SmsOnClickListener(notif.getRequestPhone()));
+                        holder.whatsapp.setOnClickListener(new WhatsappOnClickListener(notif.getRequestPhone()));
                         holder.phone.setVisibility(View.VISIBLE);
                         holder.sms.setVisibility(View.VISIBLE);
+                        holder.whatsapp.setVisibility(View.VISIBLE);
                     }
 
                     if(!notif.getRequestEmail().isEmpty()){
                         holder.email.setOnClickListener(new EmailOnClickListener(notif.getRequestEmail()));
                         holder.email.setVisibility(View.VISIBLE);
                     }
+
+                    holder.viewProfile.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(context, ProfileActivity.class);
+                            intent.putExtra("uid",notif.getRequestUid());
+                            intent.putExtra("phone",notif.getRequestPhone());
+                            intent.putExtra("email",notif.getRequestEmail());
+                            intent.putExtra("name",notif.getRequestName());
+                            context.startActivity(intent);
+                        }
+                    });
+
+                    holder.viewProfileContainer.setVisibility(View.VISIBLE);
 
                     holder.delete.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -351,6 +448,27 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
             Uri uri = Uri.parse("smsto:"+phone);
             Intent it = new Intent(Intent.ACTION_SENDTO, uri);
             context.startActivity(it);
+        }
+    }
+
+    public class WhatsappOnClickListener implements View.OnClickListener{
+        String phone;
+        public WhatsappOnClickListener(String phone) {
+            this.phone = phone;
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            try {
+                Uri uri = Uri.parse("whatsapp://send?phone=+91" +phone);
+                Intent i = new Intent(Intent.ACTION_VIEW, uri);
+                context.startActivity(i);
+            } catch (Exception e) {
+                Toast.makeText(context,"Whatsapp is not installed on this device",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
         }
     }
 
